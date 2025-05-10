@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EverGift</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-light: #f5e9da;
+      --text-light: #333;
+      --bg-dark: #1e1e1e;
+      --text-dark: #eee;
+      --button-bg: #fff;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      overflow: hidden;
+      transition: background 0.6s ease;
+    }
+
+    .dark-mode {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    button {
+      cursor: pointer;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      background-color: var(--button-bg);
+      color: var(--text-light);
+      transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background-color: #d4b89c;
+    }
+
+    .hero {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      background: url('https://images.pexels.com/photos/6119115/pexels-photo-6119115.jpeg') no-repeat center center;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 1;
+      transition: filter 1s ease;
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 1.5rem;
+      color: white;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+      margin-bottom: 20px;
+    }
+
+    .split-section {
+      display: flex;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out;
+      z-index: 2;
+    }
+
+    .circle-left, .circle-right {
+      width: 45vmin;
+      height: 45vmin;
+      border-radius: 50%;
+      position: absolute;
+      transform: scale(0);
+      transition: transform 1s ease, top 1s ease, left 1s ease, right 1s ease, bottom 1s ease;
+    }
+
+    .circle-left {
+      background-color: #d4b89c;
+      top: -100vh;
+      right: -100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2rem;
+      text-align: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .circle-left img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+
+    .circle-left .quote {
+      position: absolute;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+      z-index: 2;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    }
+
+    .circle-right {
+      background-color: #4e3629;
+      bottom: -100vh;
+      left: -100vw;
+    }
+
+    .split-right {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      color: #fff;
+    }
+
+    .dark-mode .split-right {
+      background-color: transparent;
+    }
+
+    .dark-mode button {
+      background-color: #444;
+      color: #fff;
+    }
+
+    .dark-mode button:hover {
+      background-color: #666;
+    }
+
+    .about-arc, .contact-arc, .shop-arc {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #d4b89c;
+      color: white;
+      display: flex;
+      z-index: 5;
+      padding: 60px;
+      transition: clip-path 1s ease-in-out, opacity 0.5s ease-in-out;
+      opacity: 0;
+    }
+
+    .about-arc {
+      justify-content: flex-start;
+      align-items: center;
+      clip-path: circle(0% at 0% 50%);
+    }
+
+    .about-arc.show {
+      clip-path: circle(150% at 0% 50%);
+      opacity: 1;
+    }
+
+    .contact-arc {
+      justify-content: center;
+      align-items: flex-end;
+      clip-path: circle(0% at 50% 100%);
+    }
+
+    .contact-arc.show {
+      clip-path: circle(150% at 50% 100%);
+      opacity: 1;
+    }
+
+    .shop-arc {
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      clip-path: circle(0% at 100% 50%);
+    }
+
+    .shop-arc.show {
+      clip-path: circle(150% at 100% 50%);
+      opacity: 1;
+    }
+
+    .arc-content {
+      max-width: 600px;
+    }
+
+    .arc-content h2 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .arc-content p {
+      font-size: 1.3rem;
+      line-height: 1.6;
+    }
+
+    .arc-button {
+      margin-top: 30px;
+      font-size: 20px;
+      background: white;
+      color: #333;
+    }
+
+    .dark-mode .about-arc,
+    .dark-mode .contact-arc,
+    .dark-mode .shop-arc {
+      background-color: #4e3629;
+    }
+
+    .shop-arc img {
+      width: 100%;
+      height: 60%;
+      object-fit: cover;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+
+    #loginScreen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('https://images.pexels.com/photos/6119125/pexels-photo-6119125.jpeg') no-repeat center center;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      flex-direction: column;
+      opacity: 0.9;
+    }
+
+    #loginScreen .login-box {
+      background-color: rgba(245, 233, 218, 0.8);
+      padding: 30px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    #loginScreen input {
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      width: 250px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    #loginScreen h2 {
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    #loginError {
+      color: red;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* Hide the hero section when the login screen is active */
+    #loginScreen ~ .hero {
+      display: none;
+    }
+
+    /* Adjust hero layout after login */
+    .logged-in .hero {
+      display: flex !important;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    @media screen and (max-width: 768px) {
+      .circle-left, .circle-right {
+        width: 60vmin;
+        height: 60vmin;
+      }
+      .hero h1 {
+        font-size: 3rem;
+      }
+      .hero p {
+        font-size: 1.2rem;
+      }
+      .circle-left .quote {
+        font-size: 1rem;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .circle-left, .circle-right {
+        width: 70vmin;
+        height: 70vmin;
+      }
+      .circle-left .quote {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div id="loginScreen">
+    <div class="login-box">
+      <h2>EverGift Login</h2>
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="handleLogin()">Sign In</button>
+      <p id="loginError">Invalid credentials.</p>
+    </div>
+  </div>
+
+  <div class="hero" id="hero">
+    <h1>EverGift</h1>
+    <p>From our hands to their hearts</p>
+    <button onclick="showSplit()">Explore</button>
+  </div>
+
+  <div class="split-section" id="split">
+    <div class="circle-left">
+      <div class="quote">"From our hands to their hearts"</div>
+      <img src="https://images.pexels.com/photos/6119115/pexels-photo-6119115.jpeg" alt="Product">
+    </div>
+    <div class="circle-right">
+      <div class="split-right">
+        <button onclick="backToHero()">Home</button>
+        <button onclick="showAbout()">About Us</button>
+        <button onclick="showShop()">Shop</button>
+        <button onclick="showContact()">Contact Us</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="aboutArc" class="about-arc">
+    <div class="arc-content">
+      <h2>About Us</h2>
+      <p>At EverGift, each paper creation is crafted by hand, blending tradition with heartfelt design.</p>
+      <button class="arc-button" onclick="closeAbout()">⬅ Back</button>
+    </div>
+  </div>
+
+  <div id="contactArc" class="contact-arc">
+    <div class="arc-content">
+      <h2>Contact Us</h2>
+      <p>We'd love to hear from you! Reach out at <strong>contact@evergift.com</strong>.</p>
+      <button class="arc-button" onclick="closeContact()">⬅ Back</button>
+    </div>
+  </div>
+
+  <div id="shopArc" class="shop-arc">
+    <button class="arc-button" onclick="closeShop()">⬅ Back</button>
+    <img src="https://images.pexels.com/photos/6119115/pexels-photo-6119115.jpeg" alt="Product">
+    <h2>Origami Crane Set</h2>
+    <p>$25.00</p>
+  </div>
+
+  <script>
+    function handleLogin() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const error = document.getElementById("loginError");
+
+      if (email === "user@example.com" && password === "password123") {
+        document.getElementById("loginScreen").style.display = "none";
+        document.body.style.overflow = "auto";
+        document.querySelector('.hero').style.display = 'flex';  // Make the hero section visible
+        document.body.classList.add('logged-in'); // Add class to center elements
+      } else {
+        error.style.display = "block";
+      }
+    }
+
+    function showSplit() {
+      document.getElementById("hero").style.filter = 'blur(5px)';
+      const split = document.getElementById("split");
+      split.style.visibility = 'visible';
+      split.style.opacity = 1;
+      setTimeout(() => {
+        document.querySelector('.circle-left').style.transform = 'scale(1)';
+        document.querySelector('.circle-left').style.top = '10vh';
+        document.querySelector('.circle-left').style.right = '10vw';
+        document.querySelector('.circle-right').style.transform = 'scale(1)';
+document.querySelector('.circle-right').style.top = '10vh';
+document.querySelector('.circle-right').style.left = '10vw';
+}, 100);
+}function backToHero() {
+  document.getElementById("split").style.visibility = 'hidden';
+  document.getElementById("hero").style.filter = 'none';
+}
+
+function showAbout() {
+  document.getElementById('aboutArc').classList.add('show');
+}
+
+function closeAbout() {
+  document.getElementById('aboutArc').classList.remove('show');
+}
+
+function showContact() {
+  document.getElementById('contactArc').classList.add('show');
+}
+
+function closeContact() {
+  document.getElementById('contactArc').classList.remove('show');
+}
+
+function showShop() {
+  document.getElementById('shopArc').classList.add('show');
+}
+
+function closeShop() {
+  document.getElementById('shopArc').classList.remove('show');
+}
+</script> </body> </html>
