@@ -15,7 +15,8 @@ EverGift is a beautifully crafted, animated web experience designed to bring a t
 
 - 👤 **Meet the Creators**  
   Learn more about the creators, Harshita and Anivesh, through bios and images.
-
+    Username-user@example.com
+  password-password123
 ## 📂 Project Structure
 
 ```bash
