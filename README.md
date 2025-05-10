@@ -5,9 +5,6 @@ EverGift is a beautifully crafted, animated web experience designed to bring a t
 
 ## ✨ Features
 
-- 📨 **Envelope-Style Login Animation**  
-  A unique sign-in experience where the login form folds into a stylized envelope upon success.
-
 - 🌄 **Hero Section with Animated Transition**  
   Clicking "Explore" zooms the background into a circle, transitioning into the main layout.
 
